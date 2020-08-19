@@ -16,4 +16,4 @@ Instagram User Profiling
 
 ### 프로젝트 내려받기
 ```python
-git clone 링크
+git clone https://github.com/Dev-hottae/insta_profiling.git
