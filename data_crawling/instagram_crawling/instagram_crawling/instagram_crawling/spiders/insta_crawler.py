@@ -20,14 +20,14 @@ class InstaCrawlerSpider(scrapy.Spider):
         enddate = datetime.strptime(end, "%Y-%m-%d")
         self.search = urllib.parse.quote(hashtag)
     
-        self.start_urls= self.url_format.format(self.search)
+        self.start_urls= [self.url_format.format(self.search)]
     
     def parse(self, response):
-        json = response.json()
-        item = InterestRateCrawlingItem()
-        for data in json['graphql']['hashtag']['edge_hashtag_to_media']['edges']:
+        r_json = response.json()
+        item = InstagramCrawlingItem()
+        for data in r_json['graphql']['hashtag']['edge_hashtag_to_media']['edges']:
             item['innerid']=data['node']['owner']['id']
-            item['date']=datetime.datetime.fromtimestamp(int(data['node']['taken_at_timestamp'])).strftime('%Y-%m-%d %H:%M:%S')
+            item['date']=datetime.fromtimestamp(int(data['node']['taken_at_timestamp'])).strftime('%Y-%m-%d %H:%M:%S')
         yield item
 
         is_next = True
@@ -38,5 +38,4 @@ class InstaCrawlerSpider(scrapy.Spider):
             is_next = False
 
         if is_next:
-            next_page = 'https://www.instagram.com/explore/tags/' + self.search + '/?__a=1&max_id=' + max_id
-            yield scrapy.Request(next_page, callback=self.parse)
+            yield scrapy.Request('https://www.instagram.com/explore/tags/' + self.search + '/?__a=1&max_id=' + max_id, callback=self.parse)
