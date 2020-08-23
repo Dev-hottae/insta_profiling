@@ -28,7 +28,7 @@ class InstaCrawlerSpider(scrapy.Spider):
         for data in r_json['graphql']['hashtag']['edge_hashtag_to_media']['edges']:
             item['innerid']=data['node']['owner']['id']
             item['date']=datetime.fromtimestamp(int(data['node']['taken_at_timestamp'])).strftime('%Y-%m-%d %H:%M:%S')
-        yield item
+            yield item
 
         is_next = True
         
