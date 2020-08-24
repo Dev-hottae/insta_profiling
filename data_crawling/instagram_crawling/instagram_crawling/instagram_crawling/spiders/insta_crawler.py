@@ -30,12 +30,21 @@ class InstaCrawlerSpider(scrapy.Spider):
             item['date']=datetime.fromtimestamp(int(data['node']['taken_at_timestamp'])).strftime('%Y-%m-%d %H:%M:%S')
             yield item
 
-        is_next = True
-        
-        try:
-            max_id = json['graphql']['hashtag']['edge_hashtag_to_media']['edges'][len(json['graphql']['hashtag']['edge_hashtag_to_media']['edges']) - 1]['node']['id']
-        except:
-            is_next = False
+        end_cursor = json.loads(response.text)['graphql']['hashtag']['edge_hashtag_to_media']['page_info']['end_cursor']
 
-        if is_next:
-            yield scrapy.Request('https://www.instagram.com/explore/tags/' + self.search + '/?__a=1&max_id=' + max_id, callback=self.parse)
+        if end_cursor != None:
+            yield scrapy.Request('http://instagram.com/graphql/query/?query_hash=7dabc71d3e758b1ec19ffb85639e427b&variables={"tag_name":"' + self.search + '","first":12'+',"after":"'+end_cursor+'"}', callback=self.parse_nextpage)
+
+    def parse_nextpage(self, response):
+        r_json2 = response.json()
+        item = InstagramCrawlingItem()
+        for data in r_json2['data']['hashtag']['edge_hashtag_to_media']['edges']:
+            item['innerid']=data['node']['owner']['id']
+            item['date']=datetime.fromtimestamp(int(data['node']['taken_at_timestamp'])).strftime('%Y-%m-%d %H:%M:%S')
+            yield item
+
+        end_cursor = json.loads(response.text)['data']['hashtag']['edge_hashtag_to_media']['page_info']['end_cursor']
+
+        if end_cursor != None:
+            yield scrapy.Request('http://instagram.com/graphql/query/?query_hash=7dabc71d3e758b1ec19ffb85639e427b&variables={"tag_name":"' + self.search + '","first":12'+',"after":"'+end_cursor+'"}', callback=self.parse_nextpage)
+
