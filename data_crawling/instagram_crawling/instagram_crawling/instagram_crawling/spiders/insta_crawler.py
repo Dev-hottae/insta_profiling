@@ -8,8 +8,6 @@ from ..items import InstagramCrawlingItem
 
 class InstaCrawlerSpider(scrapy.Spider):
     name = 'insta_crawler'
-    # allowed_domains = ['instagram.com']
-    # start_urls = ['http://instagram.com/']
 
     url_format = 'https://www.instagram.com/explore/tags/{0}/?__a=1'
  
@@ -21,31 +19,30 @@ class InstaCrawlerSpider(scrapy.Spider):
     
     def parse(self, response):
         r_json = response.json()
+
         item = InstagramCrawlingItem()
         for data in r_json['graphql']['hashtag']['edge_hashtag_to_media']['edges']:
             item['innerid']=data['node']['owner']['id']
             item['date'] = datetime.fromtimestamp(int(data['node']['taken_at_timestamp'])).strftime('%Y-%m-%d %H:%M:%S')
             item['shortcode'] = data['node']['shortcode']
             # 태그 분리 & 한국어만
-            print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-            print(item['shortcode'])
-            print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
             try:
                 text = data['node']['edge_media_to_caption']['edges'][0]['node']['text']
             except:
-                continue
+                text = ''
+                item['text'] = ''
+            else:
+                item['text'] = data['node']['edge_media_to_caption']['edges'][0]['node']['text']
             item['tags'] = self.tag_extraction(text)
+            item['end_cursor'] = json.loads(response.text)['graphql']['hashtag']['edge_hashtag_to_media']['page_info']['end_cursor']
             item['image_url'] = data['node']['thumbnail_resources'][2]['src']
 
             yield item
 
         end_cursor = json.loads(response.text)['graphql']['hashtag']['edge_hashtag_to_media']['page_info']['end_cursor']
 
-        print("end here::!!!",
-              'http://instagram.com/graphql/query/?query_hash=7dabc71d3e758b1ec19ffb85639e427b&variables={"tag_name":"' + self.search + '","first":12' + ',"after":"' + end_cursor + '"}')
-
         if end_cursor != None:
-            yield scrapy.Request('http://instagram.com/graphql/query/?query_hash=7dabc71d3e758b1ec19ffb85639e427b&variables={"tag_name":"' + self.search + '","first":12'+',"after":"'+end_cursor+'"}', callback=self.parse)
+            yield scrapy.Request('http://instagram.com/graphql/query/?query_hash=7dabc71d3e758b1ec19ffb85639e427b&variables={"tag_name":"' + self.search + '","first":12'+',"after":"'+end_cursor+'"}', callback=self.parse_nextpage)
 
     def parse_nextpage(self, response):
         r_json2 = response.json()
@@ -55,20 +52,20 @@ class InstaCrawlerSpider(scrapy.Spider):
             item['date'] = datetime.fromtimestamp(int(data['node']['taken_at_timestamp'])).strftime('%Y-%m-%d %H:%M:%S')
             item['shortcode'] = data['node']['shortcode']
             # 태그 분리 & 한국어만
-            print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-            print(data['node']['edge_media_to_caption']['edges'])
-            print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
             try:
                 text = data['node']['edge_media_to_caption']['edges'][0]['node']['text']
             except:
-                continue
+                text = ''
+                item['text'] = ''
+            else:
+                item['text'] = data['node']['edge_media_to_caption']['edges'][0]['node']['text']
             item['tags'] = self.tag_extraction(text)
+            item['end_cursor'] = json.loads(response.text)['data']['hashtag']['edge_hashtag_to_media']['page_info']['end_cursor']
             item['image_url'] = data['node']['thumbnail_resources'][2]['src']
             yield item
 
         end_cursor = json.loads(response.text)['data']['hashtag']['edge_hashtag_to_media']['page_info']['end_cursor']
 
-        print("end here::!!!",'http://instagram.com/graphql/query/?query_hash=7dabc71d3e758b1ec19ffb85639e427b&variables={"tag_name":"' + self.search + '","first":12'+',"after":"'+end_cursor+'"}')
         if end_cursor != None:
             yield scrapy.Request('http://instagram.com/graphql/query/?query_hash=7dabc71d3e758b1ec19ffb85639e427b&variables={"tag_name":"' + self.search + '","first":12'+',"after":"'+end_cursor+'"}', callback=self.parse_nextpage)
 
