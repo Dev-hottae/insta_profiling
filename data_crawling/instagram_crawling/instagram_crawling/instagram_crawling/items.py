@@ -11,3 +11,6 @@ class InstagramCrawlingItem(scrapy.Item):
     # name = scrapy.Field()
     innerid = scrapy.Field()
     date = scrapy.Field()
+    tags = scrapy.Field()
+    shortcode = scrapy.Field()
+    image_url = scrapy.Field()
