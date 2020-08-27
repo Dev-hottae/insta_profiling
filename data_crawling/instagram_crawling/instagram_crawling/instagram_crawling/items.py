@@ -20,10 +20,6 @@ class InstagramCrawlingItem(scrapy.Item):
 class UserProfSpiderItem(scrapy.Item):
     # define the fields for your item here like:
     # name = scrapy.Field()
-    innerid = scrapy.Field()
-    date = scrapy.Field()
-    tags = scrapy.Field()
-    text = scrapy.Field()
-    shortcode = scrapy.Field()
-    end_cursor = scrapy.Field()
-    image_url = scrapy.Field()
+    user_name = scrapy.Field()
+    user_profile = scrapy.Field()
+    post_short_codes = scrapy.Field()
