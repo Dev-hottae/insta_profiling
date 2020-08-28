@@ -17,3 +17,15 @@ Instagram User Profiling
 ### 프로젝트 내려받기
 ```python
 git clone https://github.com/Dev-hottae/insta_profiling.git
+```
+
+
+### 인스타 태그를 통해 사용자 innerid 가져오기
+```python
+scrapy crawl insta_crawler -o <filename.json> -a hashtag="<tag>"
+```
+
+### 인스타 innerid 를 통해 사용자 히스토리 가져오기
+```python
+scrapy crawl user_prof_crawler -o <filename.json> -a path="<filepath>"
+```
