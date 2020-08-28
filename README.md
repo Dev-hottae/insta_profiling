@@ -26,6 +26,9 @@ scrapy crawl insta_crawler -o <filename.json> -a hashtag="<tag>"
 ```
 
 ### 인스타 innerid 를 통해 사용자 히스토리 가져오기
+
+> 중간에 429 에러로 인한 601초 중단 추가하였음, 초기 scrapy 활성화 시 직접 입력 가능
+
 ```python
 scrapy crawl user_prof_crawler -o <filename.json> -a path="<filepath>"
 ```
