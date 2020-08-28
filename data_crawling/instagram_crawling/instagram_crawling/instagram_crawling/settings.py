@@ -20,7 +20,7 @@ NEWSPIDER_MODULE = 'instagram_crawling.spiders'
 ROBOTSTXT_OBEY = False
 
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
-CONCURRENT_REQUESTS = 4
+CONCURRENT_REQUESTS = 2
 
 # Configure a delay for requests for the same website (default: 0)
 # See https://docs.scrapy.org/en/latest/topics/settings.html#download-delay
@@ -53,7 +53,7 @@ DOWNLOAD_DELAY = 1
 RETRY_HTTP_CODES = [429]
 DOWNLOADER_MIDDLEWARES = {
    'scrapy.downloadermiddlewares.retry.RetryMiddleware': None,
-   'instagram_crawling.middlewares.InstagramCrawlingDownloaderMiddleware': 543,
+   'instagram_crawling.middlewares.TooManyRequestsRetryMiddleware': 543,
 }
 
 # Enable or disable extensions
