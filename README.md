@@ -30,5 +30,5 @@ scrapy crawl insta_crawler -o <filename.json> -a hashtag="<tag>"
 > 중간에 429 에러로 인한 601초 중단 추가하였음, 초기 scrapy 활성화 시 직접 입력 가능
 
 ```python
-scrapy crawl user_prof_crawler -o <filename.json> -a path="<filepath>"
+scrapy crawl user_prof_crawler -o <filename.json> -a path="<filepath>" -a hold_time=<601(default)>
 ```
