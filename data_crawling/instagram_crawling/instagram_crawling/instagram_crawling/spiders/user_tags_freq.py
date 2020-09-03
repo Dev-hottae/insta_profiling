@@ -8,6 +8,8 @@ from datetime import datetime
 from ..items import UserProfSpiderItem
 from collections import defaultdict
 
+from ..middlewares import TooManyRequestsRetryMiddleware
+
 
 class UserTagsSpider(scrapy.Spider):
     name = 'user_tags_crawler'
@@ -33,7 +35,7 @@ class UserTagsSpider(scrapy.Spider):
         self.max_post_count = max_post_count
         self.from_date = datetime.timestamp(datetime.strptime(str(from_date), "%Y%m%d"))
 
-        UserTagsSpider.HOLD_TIME = hold_time
+        TooManyRequestsRetryMiddleware.HOLD_TIME = hold_time
 
         self.start_urls = [
             UserTagsSpider.url_format + '%7B%22id%22%3A%22' + str(user_id) + '%22%2C%22first%22%3A12%7D' for user_id in self.user_id_list
@@ -99,8 +101,8 @@ class UserTagsSpider(scrapy.Spider):
             for post in posts:
                 post_time = post['node']['taken_at_timestamp']
 
-                # 2020년 1월 1일 00시
-                if post_time > 1577836800:
+                # 2020년 1월 1일 00시(default)
+                if post_time > self.from_date:
                     tags = self.tag_extraction(post['node']['edge_media_to_caption']['edges'][0]['node']['text'])
 
                     for tag in tags:

@@ -7,9 +7,6 @@ from scrapy import signals
 
 # useful for handling different item types with a single interface
 # from itemadapter import is_item, ItemAdapter
-from .spiders.user_prof_crawler import \
-    UserProfSpider
-from .spiders.user_tags_freq import UserTagsSpider
 
 
 class InstagramCrawlingSpiderMiddleware:
@@ -113,6 +110,8 @@ import time
 
 class TooManyRequestsRetryMiddleware(RetryMiddleware):
 
+    HOLD_TIME = None
+
     def __init__(self, crawler):
         super(TooManyRequestsRetryMiddleware, self).__init__(crawler.settings)
         self.crawler = crawler
@@ -126,7 +125,7 @@ class TooManyRequestsRetryMiddleware(RetryMiddleware):
             return response
         elif response.status == 429:
             self.crawler.engine.pause()
-            time.sleep(UserTagsSpider.HOLD_TIME) # If the rate limit is renewed in a minute, put 60 seconds, and so on.
+            time.sleep(TooManyRequestsRetryMiddleware.HOLD_TIME) # If the rate limit is renewed in a minute, put 60 seconds, and so on.
             self.crawler.engine.unpause()
             reason = response_status_message(response.status)
             return self._retry(request, reason, spider) or response
