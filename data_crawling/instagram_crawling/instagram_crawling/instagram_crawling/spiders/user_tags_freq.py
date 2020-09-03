@@ -17,7 +17,7 @@ class UserTagsSpider(scrapy.Spider):
 
     url_format = "https://www.instagram.com/graphql/query/?query_hash=bfa387b2992c3a52dcbe447467b4b771&variables="
 
-    def __init__(self, path, from_date=20200101, hold_time=601, min_post_count=15, max_post_count=500, **kwargs):
+    def __init__(self, path, from_date=20200101, hold_time=601, min_post_count=10, max_post_count=500, **kwargs):
         '''
         :param path: innerid 가 들어있는 json 데이터 경로
         :param from_date: 언제이후의 포스트 가져올지 설정
@@ -66,6 +66,9 @@ class UserTagsSpider(scrapy.Spider):
                     for tag in tags:
                         tags_dict[tag] += 1
 
+                else:
+                    break
+
             end_cursor = json.loads(response.text)['data']['user']['edge_owner_to_timeline_media']['page_info'][
                 'end_cursor']
             if end_cursor != None:
@@ -107,6 +110,10 @@ class UserTagsSpider(scrapy.Spider):
 
                     for tag in tags:
                         tags_dict[tag] += 1
+
+                else:
+                    in_end_cursor = None
+                    break
 
         return tags_dict
 
