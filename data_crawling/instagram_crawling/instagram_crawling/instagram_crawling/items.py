@@ -30,3 +30,12 @@ class UserProfSpiderItem(scrapy.Item):
 
     user_profile = scrapy.Field()
     post_short_codes = scrapy.Field()
+
+class InstaReplySpiderItem(scrapy.Item):
+    # define the fields for your item here like:
+    # name = scrapy.Field()
+    user_id = scrapy.Field()
+    user_name = scrapy.Field()
+    comment_users = scrapy.Field()
+    shortcode = scrapy.Field()
+    text = scrapy.Field()
