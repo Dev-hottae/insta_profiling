@@ -2,11 +2,13 @@
 #
 # See documentation in:
 # https://docs.scrapy.org/en/latest/topics/spider-middleware.html
+import random
 
 from scrapy import signals
 
 # useful for handling different item types with a single interface
 # from itemadapter import is_item, ItemAdapter
+from .settings import ROTATING_PROXY_LIST
 
 
 class InstagramCrawlingSpiderMiddleware:
@@ -133,3 +135,11 @@ class TooManyRequestsRetryMiddleware(RetryMiddleware):
             reason = response_status_message(response.status)
             return self._retry(request, reason, spider) or response
         return response
+
+
+# proxy
+from w3lib.http import basic_auth_header
+
+class CustomProxyMiddleware(object):
+    def process_request(self, request, spider):
+        request.meta["proxy"] = random.choice(ROTATING_PROXY_LIST)
