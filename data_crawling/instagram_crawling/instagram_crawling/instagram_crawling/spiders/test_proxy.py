@@ -12,7 +12,24 @@ from ..middlewares import TooManyRequestsRetryMiddleware
 class TestProxy(scrapy.Spider):
     name = 'test_proxy'
 
-    start_urls= ['https://findip.kr/']
+    start_urls= ['https://findip.kr/',
+                 'https://findip.kr/',
+                 'https://findip.kr/',
+                 'https://findip.kr/',
+                 'https://findip.kr/',
+                 'https://findip.kr/',
+                 'https://findip.kr/',
+                 'https://findip.kr/',
+                 'https://findip.kr/',
+                 'https://findip.kr/',
+                 'https://findip.kr/',
+                 'https://findip.kr/',
+                 'https://findip.kr/',
+                 'https://findip.kr/',
+                 'https://findip.kr/',
+                 'https://findip.kr/',
+                 'https://findip.kr/',
+                 ]
 
 
     def start_requests(self):

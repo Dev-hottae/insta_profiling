@@ -15,12 +15,11 @@ NEWSPIDER_MODULE = 'instagram_crawling.spiders'
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = 'instagram_crawling (+http://www.yourdomain.com)'
-
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = False
 
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
-CONCURRENT_REQUESTS = 2
+CONCURRENT_REQUESTS = 8
 
 # Configure a delay for requests for the same website (default: 0)
 # See https://docs.scrapy.org/en/latest/topics/settings.html#download-delay
@@ -51,25 +50,26 @@ DOWNLOAD_DELAY = 1
 # Enable or disable downloader middlewares
 # See https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
 # Retry many times since proxies often fail
-RETRY_TIMES = 5
 # Retry on most error codes since proxies fail for different reasons
-RETRY_HTTP_CODES = [500, 503, 504, 400, 403, 404, 408, 429]
+RETRY_HTTP_CODES = [429]
 
 DOWNLOADER_MIDDLEWARES = {
-   'scrapy.downloadermiddlewares.retry.RetryMiddleware': None,
-   'instagram_crawling.middlewares.TooManyRequestsRetryMiddleware': 543,
-    'rotating_proxies.middlewares.RotatingProxyMiddleware': 610,
-    'rotating_proxies.middlewares.BanDetectionMiddleware': 620,
+    'scrapy.downloadermiddlewares.retry.RetryMiddleware': None,
+    'instagram_crawling.middlewares.TooManyRequestsRetryMiddleware': 543,
+    'instagram_crawling.middlewares.CustomProxyMiddleware': 350,
+    'scrapy.downloadermiddlewares.httpproxy.HttpProxyMiddleware': 400,
 }
 
-ROTATING_PROXY_LIST_PATH  = r'C:\Users\dlagh\PycharmProjects\insta_profiling\data_crawling\instagram_crawling\instagram_crawling\instagram_crawling\spiders\proxy_list.txt'
-
-# Proxy mode
-# 0 = Every requests have different proxy
-# 1 = Take only one proxy from the list and assign it to every requests
-# 2 = Put a custom proxy to use in the settings
-PROXY_MODE = 0
-
+ROTATING_PROXY_LIST = [
+    'https://150.95.178.151:8888',
+    'https://36.89.183.241:49044',
+    "https://49.0.82.190:8080",
+    "http://52.152.169.176:80",
+    "http://83.97.23.90:18080",
+    "https://95.174.67.50:18080",
+    "http://139.99.102.114:80"
+    # ...
+]
 # Enable or disable extensions
 # See https://docs.scrapy.org/en/latest/topics/extensions.html
 #EXTENSIONS = {
