@@ -39,6 +39,11 @@ class UserProfSpider(scrapy.Spider):
             UserProfSpider.url_format + '%7B%22id%22%3A%22' + str(user_id) + '%22%2C%22first%22%3A12%7D' for user_id in self.user_id_list
         ]
 
+    def start_requests(self):
+        for url in self.start_urls:
+            requests = scrapy.Request(url=url, callback=self.parse, dont_filter=True)
+            yield requests
+
     def parse(self, response):
         r_json = response.json()
 
